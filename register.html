@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - FPS Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h2>Créer un compte</h2>
+    <form id="registerForm" action="php/register.php" method="POST">
+        <input type="text" name="nom" placeholder="Nom" required>
+        <input type="text" name="prenom" placeholder="Prénom" required>
+        <input type="text" name="pseudo" placeholder="Pseudo" required>
+        <input type="email" name="email" placeholder="Adresse e-mail" required>
+        <input type="password" name="mot_de_passe" placeholder="Mot de passe" required>
+        <button type="submit">Créer le compte</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const email = formData.get('email');
+    const pseudo = formData.get('pseudo');
+
+    // Vérifier si l'email a un format valide
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(email)) {
+        alert("L'email n'est pas valide.");
+        return;
+    }
+
+    // Vérifier si le pseudo a une longueur suffisante
+    if (pseudo.length < 3) {
+        alert("Le pseudo doit comporter au moins 3 caractères.");
+        return;
+    }
+
+    fetch('php/register.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            document.getElementById("message").innerText = data.message;
+            setTimeout(() => {
+                window.location.href = "login.html"; // Redirection vers la page de connexion après 3 secondes
+            }, 3000);
+        } else {
+            document.getElementById("message").innerText = data.message;
+        }
+    })
+    .catch(error => console.error('Erreur:', error));
+});
+
+    </script>
+</body>
+</html>
